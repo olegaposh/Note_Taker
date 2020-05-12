@@ -8,7 +8,7 @@
 
 const express = require("express");
 const fs = require("fs");
-
+const path =require("path");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -23,13 +23,14 @@ app.use(express.static("public"));
 //load the index page when visiting '/'
 app.get("/", (req, res) => {
 
-    res.sendFile(__dirname + "/public/index.html");
+    res.sendFile(path.join(__dirname, "/public/index.html"));
+    
 })
 
 //load the notes page when visiting /notes
 app.get("/notes", (req, res) => {
 
-    res.sendFile(__dirname + "/public/notes.html");
+    res.sendFile(path.join(__dirname + "/public/notes.html"));
 })
 
 // The application should have a db.json file on the backend that will be used to store and retrieve notes using the fs module.
@@ -42,21 +43,26 @@ app.get("/api/notes", (req, res) => {
             return console.log(err);        
         }
 
-        console.log(data);
-        return data;
+        let notes = JSON.parse(data);
+        //save to server
+        res.json(notes);
+        
     })
-
-
-
-
-
     
     
 })
 // POST /api/notes - Should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client.
 app.post("/api/notes", (req, res) => {
 
-    
+    const savedJason = fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf-8");
+
+    const savedData = JSON.parse(savedJason);
+    const newNote = req.body;
+    savedData.push(newNote);
+    fs.writeFileSync(path.join(__dirname + "/db/db.json"),JSON.stringify(savedData));
+    res.json(newNote);
+
+
 })
 
 // DELETE /api/notes/:id - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique id when it's saved. In order to delete a note, you'll need to read all notes from the db.json file, remove the note with the given id property, and then rewrite the notes to the db.json file.
@@ -66,7 +72,10 @@ app.delete("/api/notes/:id", (req, res) => {
 })
 
 
+app.get("*", (req, res) => {
 
+    res.sendFile(__dirname + "/public/index.html");
+})
 
 app.listen(PORT, () => {
     console.log(`App listening on http://localhost:${PORT}`);
