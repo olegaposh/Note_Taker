@@ -54,14 +54,20 @@ app.get("/api/notes", (req, res) => {
 // POST /api/notes - Should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client.
 app.post("/api/notes", (req, res) => {
 
-    const savedJason = fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf-8");
+    //OR const savedJason = fs.readFileSync(path.join(__dirname, "/db/db.json"), "utf-8");
+    fs.readFile("./db/db.json", "utf-8", (err, data) => {
 
-    const savedData = JSON.parse(savedJason);
+        if (err) {
+            return console.log(err);        
+        }
+
+    const savedData = JSON.parse(data);
     const newNote = req.body;
     savedData.push(newNote);
     fs.writeFileSync(path.join(__dirname + "/db/db.json"),JSON.stringify(savedData));
     res.json(newNote);
-
+        
+    })
 
 })
 
@@ -69,6 +75,7 @@ app.post("/api/notes", (req, res) => {
 app.delete("/api/notes/:id", (req, res) => {
     //req.params.id
 
+    
 })
 
 

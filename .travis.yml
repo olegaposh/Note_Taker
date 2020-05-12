@@ -2,6 +2,6 @@ language: node_js
 deploy:
   provider: heroku
   api_key:
-    secure: 67edcf3a-452b-469a-ae5f-04a894cce138
+    secure: 
 app: awesome-note-taker
 
