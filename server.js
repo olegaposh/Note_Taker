@@ -89,7 +89,7 @@ app.delete("/api/notes/:id", (req, res) => {
 
     fs.writeFileSync(path.join(__dirname + "/db/db.json"),JSON.stringify(remainingNotes));
 
-    res.end("This Note has been deleted!");
+    res.end();
     
 })
 
